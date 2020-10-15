@@ -6,7 +6,7 @@ module tb_top;
     // Initialize clock
     always #50 CLK <= ~CLK;
     
-    top DUT();
+    top DUT( .CLK(CLK) );
     
     
     

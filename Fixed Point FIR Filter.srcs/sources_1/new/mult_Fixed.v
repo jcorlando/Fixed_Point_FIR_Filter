@@ -1,9 +1,9 @@
 `timescale 1ns / 1ps
 
-module mult_Fixed # ( parameter WI1 = 4, WF1 = 4,    // input 1 integer and fraction bits
-                                WI2 = 4, WF2 = 4,    // input 2 integer and fraction bits
-                             WIO = WI1 + WI2,        // output integer bits
-                             WFO = WF1 + WF2 )   // output fraction bits
+module mult_Fixed # ( parameter WI1 = 4, WF1 = 4,   // input 1 integer and fraction bits
+                                WI2 = 4, WF2 = 4,   // input 2 integer and fraction bits
+                             WIO = WI1 + WI2,       // output integer bits
+                             WFO = WF1 + WF2 )      // output fraction bits
 (
     input RESET,
     input signed [WI1 + WF1 - 1 : 0] in1,            // Multiplicand
@@ -12,7 +12,7 @@ module mult_Fixed # ( parameter WI1 = 4, WF1 = 4,    // input 1 integer and frac
     output reg OVF                                   // Overflow Flag
 );
     // Local Parameters
-    localparam WIP = WI1 + WI2;                 // local parameters for Precise integer bits
+    localparam WIP = WI1 + WI2;             // local parameters for Precise integer bits
     localparam WFP = WF1 + WF2;             // local parameters for Precise fraction bits
     
     // Temporary registers for output
@@ -40,7 +40,7 @@ module mult_Fixed # ( parameter WI1 = 4, WF1 = 4,    // input 1 integer and frac
         else
         begin
             // Logic for integer bits
-            if( WIO == WI1 + WI2 - 1 )  // Assign precise bits to temp_out_int_bits
+            if( WIO == WIP )  // Assign precise bits to temp_out_int_bits
             begin
                 temp_out_int_bits <= precise_int_bits;
                 // ----------------------------- Check for overflow
@@ -49,7 +49,7 @@ module mult_Fixed # ( parameter WI1 = 4, WF1 = 4,    // input 1 integer and frac
                 else
                     OVF <= 0;
             end
-            else if( WIO > WI1 + WI2 - 1 )  // sign-extend
+            else if( WIO > WIP )  // sign-extend
             begin
                 temp_out_int_bits <= {{ (WIO - WIP){precise_int_bits[WIP - 1]}} , precise_int_bits };
                 OVF <= 0;       // Overflow always = 0 in this case
@@ -68,12 +68,12 @@ module mult_Fixed # ( parameter WI1 = 4, WF1 = 4,    // input 1 integer and frac
             
             
             // Logic for fraction bits
-            if( WFO == WF1 + WF2 + 1 ) 
+            if( WFO == WFP ) 
             begin                       // Assign precise bits to temp_out_frac_bits
                 temp_out_frac_bits <= precise_frac_bits;
                 OVF <= 0;
             end
-            else if( WFO > WF1 + WF2 + 1 )
+            else if( WFO > WFP )
             begin                           // Append zeros
                 temp_out_frac_bits <= { precise_frac_bits[WFP - 1 : 0] , {(WFO - (WF1 + WF2 + 1)){1'b0}} };
                 OVF <= 0;
