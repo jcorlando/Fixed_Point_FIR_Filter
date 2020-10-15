@@ -29,7 +29,7 @@ module top # ( WIX = 2, WFX = 6,
     h0_h1_adder( .in1(h1.out), .in2(h2.out) );
     
     add_Fixed # ( .WI1(WIX + WIH + 1), .WF1(WFX + WFH), .WI2(WIX + WIH), .WF2(WFX + WFH) )
-    h1_h2_adder( .in1(h0_h1_adder.out), .in2(h2.out) );
+    h1_h2_adder( .in1(h0_h1_adder.out), .in2(h3.out) );
     
     
 endmodule
